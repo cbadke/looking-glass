@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <% include _styles.ejs %>
+  </head>
+  <body ng-app="lookingGlass">
+
+	<% include _header.ejs %>
+
+  	<div class="container main">
+	    <div ng-view>  
+	    </div>
+  	</div>
+
+    <% include _bsScripts.ejs %>
+    <% include _appScripts.ejs %>
+  </body>
+</html>
