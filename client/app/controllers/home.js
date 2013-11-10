@@ -25,9 +25,8 @@ angular.module('lookingGlass').factory('room', function(socketio) {
     };
 });
 
-
 angular.module('lookingGlass').controller('HomeCtrl',
-    function($scope, $resource, $location, $routeParams, room){
+    function($scope, $location, $routeParams, $window, room){
 
         if ($routeParams.room === null || $routeParams.room === undefined || $routeParams.room === "") {
             var newRoomName = ($location.path() + '/' + genRoomName()).replace('//', '/');
@@ -47,7 +46,7 @@ angular.module('lookingGlass').controller('HomeCtrl',
                 optional: {}
             },
             function(localMediaStream) {
-                $scope.localSource = window.URL.createObjectURL(localMediaStream);
+                $scope.localSource = $window.URL.createObjectURL(localMediaStream);
                 $scope.$apply();
 
                 room.join($routeParams.room);
