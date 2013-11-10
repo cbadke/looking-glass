@@ -1,0 +1,12 @@
+@width: 640px;
+@height: 480px;
+@scale: 0.25;
+
+.local-feed {
+    -webkit-transform: scale(-@scale, @scale);
+    transform: scale(-@scale, @scale);
+    position: fixed;
+    right: -(@width/2) + (@width*@scale/2);
+    bottom: -(@height/2) + (@height*@scale/2);
+    z-index: 100;
+}

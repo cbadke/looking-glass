@@ -23,7 +23,16 @@ angular.module('lookingGlass').controller('HomeCtrl', ['$scope', '$resource', '$
         }
 
         navigator.getMedia(
-            {video:true, audio:true},
+            {
+                audio: true,
+                video: {
+                    mandatory: {
+                        maxWidth: 640,
+                        maxHeight: 480
+                    }
+                },
+                optional: {}
+            },
             function(localMediaStream) {
                 $scope.localSource = window.URL.createObjectURL(localMediaStream);
                 $scope.$apply();
