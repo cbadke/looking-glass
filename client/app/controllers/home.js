@@ -13,8 +13,21 @@ var genRoomName = function() {
     return text;
 };
 
-angular.module('lookingGlass').controller('HomeCtrl', ['$scope', '$resource', '$location', '$routeParams',
-    function($scope, $resource, $location, $routeParams){
+angular.module('lookingGlass').constant('socketio', io);
+
+angular.module('lookingGlass').factory('room', function(socketio) {
+    var socket = socketio.connect('/');
+
+    return {
+        join : function(roomName) {
+                   socket.emit('join', {room : roomName});
+                }
+    };
+});
+
+
+angular.module('lookingGlass').controller('HomeCtrl',
+    function($scope, $resource, $location, $routeParams, room){
 
         if ($routeParams.room === null || $routeParams.room === undefined || $routeParams.room === "") {
             var newRoomName = ($location.path() + '/' + genRoomName()).replace('//', '/');
@@ -36,7 +49,8 @@ angular.module('lookingGlass').controller('HomeCtrl', ['$scope', '$resource', '$
             function(localMediaStream) {
                 $scope.localSource = window.URL.createObjectURL(localMediaStream);
                 $scope.$apply();
+
+                room.join($routeParams.room);
             },
-            function(err){
-            });
-    }]); 
+            function(err){});
+        });

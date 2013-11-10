@@ -45,6 +45,17 @@ if ('development' == app.get('env')) {
 
 routeConfig.configureRoutes(app);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('express server listening on port ' + app.get('port'));
+});
+
+
+//socketio
+var io = require('socket.io').listen(server);
+var peers = [];
+
+io.sockets.on('connection', function (socket) {
+    socket.on('join', function(data) {
+        console.log('hello from ' + data.room);
+    });
 });
