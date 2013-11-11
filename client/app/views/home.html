@@ -5,9 +5,10 @@
         <h1>{{name | initialCaps}} has no friends :(</h1>
     </div>
     <div ng-show="peers.length" class="row">
-            <div ng-repeat="peer in peers">
+        <ul chat-grid peer-count="peers.length">
+            <li ng-repeat="peer in peers">
                 <chat-peer peer="peer" />
-            </div>
-        </div>
+            </li>
+        </ul>
     </div>
 </div>
