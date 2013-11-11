@@ -46,6 +46,7 @@ angular.module('lookingGlass').controller('HomeCtrl',
 
         var id = genRoomName();
         $scope.peers = [];
+        $scope.name = $routeParams.name;
 
         room.onNewPeers( function(peers){
             $scope.peers = peers.filter( function (p) {
