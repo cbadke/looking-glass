@@ -50,6 +50,9 @@ angular.module('lookingGlass').controller('HomeCtrl',
         room.onNewPeers( function(peers){
             $scope.peers = peers.filter( function (p) {
                 return p.id !== id;
+            }).map( function(p) {
+                p.remoteSource = $scope.localSource;
+                return p;
             });
             $scope.$apply();
         });

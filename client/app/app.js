@@ -1,3 +1,5 @@
+'use strict'
+
 angular.module('lookingGlass', ['ngResource'])
 .config(['$routeProvider', function($routeProvider){
 	$routeProvider
