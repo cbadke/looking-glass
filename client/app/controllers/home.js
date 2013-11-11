@@ -17,11 +17,21 @@ angular.module('lookingGlass').constant('socketio', io);
 
 angular.module('lookingGlass').factory('room', function(socketio) {
     var socket = socketio.connect('/');
+    var peerObservers = [];
+
+    socket.on('peers', function(data) {
+        peerObservers.forEach( function(o) {
+            o(data.peers);
+        });
+    });
 
     return {
-        join : function(roomName) {
-                   socket.emit('join', {room : roomName});
-                }
+        join : function(roomName, id, name) {
+                   socket.emit('join', {room : roomName, id : id, name : name});
+               },
+        onNewPeers : function(callback) {
+                         peerObservers.push(callback);
+                     }
     };
 });
 
@@ -33,6 +43,16 @@ angular.module('lookingGlass').controller('HomeCtrl',
             $location.path(newRoomName);
             return;
         }
+
+        var id = genRoomName();
+        $scope.peers = [];
+
+        room.onNewPeers( function(peers){
+            $scope.peers = peers.filter( function (p) {
+                return p.id !== id;
+            });
+            $scope.$apply();
+        });
 
         navigator.getMedia(
             {
@@ -49,7 +69,7 @@ angular.module('lookingGlass').controller('HomeCtrl',
                 $scope.localSource = $window.URL.createObjectURL(localMediaStream);
                 $scope.$apply();
 
-                room.join($routeParams.room);
+                room.join($routeParams.room, id, $routeParams.name);
             },
             function(err){});
         });

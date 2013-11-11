@@ -1,1 +1,6 @@
 <video class="local-feed" src="{{localSource}}" autoplay muted="true"/>
+<video class="" src="{{remoteSource}}" autoplay muted="false"/>
+
+<div ng-repeat="peer in peers">
+    {{peer.name}}
+</div>

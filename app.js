@@ -52,10 +52,42 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 
 //socketio
 var io = require('socket.io').listen(server);
-var peers = [];
+
+var rooms = {};
+
+var broadcastRoomMembers = function(room) {
+    var peers = { 
+        peers : room.map(function (member){
+                    return {
+                        id : member.id,
+                        name : member.name
+                    };
+                })
+    };
+
+    room.forEach(function (member) {
+        member.socket.emit('peers', peers);
+    });
+};
 
 io.sockets.on('connection', function (socket) {
     socket.on('join', function(data) {
-        console.log('hello from ' + data.room);
+
+        if (!rooms[data.room]) {
+            rooms[data.room] = [];
+        }
+
+        rooms[data.room].push({socket : socket, id : data.id, name : data.name});
+
+        broadcastRoomMembers(rooms[data.room]);
+    });
+
+    socket.on('disconnect', function() {
+        for (room in rooms) {
+            rooms[room] = rooms[room].filter( function (p) {
+                return p.socket !== socket;
+            });
+            broadcastRoomMembers(rooms[room]);
+        }
     });
 });
