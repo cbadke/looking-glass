@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('lookingGlass', ['ngResource'])
+angular.module('lookingGlass', ['ngResource', 'ngRoute'])
 .config(['$routeProvider', function($routeProvider){
 	$routeProvider
 		.when('/:room/:name', {
