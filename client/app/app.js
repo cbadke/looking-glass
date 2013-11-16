@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('lookingGlass', ['ngResource', 'ngRoute'])
-.config(['$routeProvider', function($routeProvider){
+.config(function($routeProvider){
 	$routeProvider
 		.when('/:room/:name', {
 			templateUrl: '/app/views/home.html',
@@ -9,8 +9,8 @@ angular.module('lookingGlass', ['ngResource', 'ngRoute'])
 		})
 		.otherwise({
 			redirectTo: '/'
-		})
-}])
+		});
+})
 .run(['$rootScope', function($rootScope){
 
 }]);

@@ -55,6 +55,30 @@ var io = require('socket.io').listen(server);
 
 var rooms = {};
 
+var idToSocket = function(id) {
+    for (room in rooms) {
+        var matches = rooms[room].filter( function (member) {
+            return id === member.id;
+        });
+
+        if (matches.length) return matches[0].socket;
+    };
+
+    return null;
+};
+
+var socketToId = function(socket) {
+    for (room in rooms) {
+        var matches = rooms[room].filter( function (member) {
+            return socket === member.socket;
+        });
+
+        if (matches.length) return matches[0].id
+    };
+
+    return null;
+};
+
 var broadcastRoomMembers = function(room) {
     var peers = { 
         peers : room.map(function (member){
@@ -73,6 +97,8 @@ var broadcastRoomMembers = function(room) {
 io.sockets.on('connection', function (socket) {
     socket.on('join', function(data) {
 
+        console.log(data.name + ' is joining ' + data.room + ' as id ' + data.id);
+
         if (!rooms[data.room]) {
             rooms[data.room] = [];
         }
@@ -80,6 +106,16 @@ io.sockets.on('connection', function (socket) {
         rooms[data.room].push({socket : socket, id : data.id, name : data.name});
 
         broadcastRoomMembers(rooms[data.room]);
+
+        console.log('Request offers from: ' + data.id);
+
+        var id = socketToId(socket);
+        var peers = rooms[data.room].map(function (p) {
+            return p.id;
+        }).filter(function (peerId) {
+            return peerId !== id;
+        });
+        socket.emit('provideOffer', peers);
     });
 
     socket.on('disconnect', function() {
@@ -89,5 +125,23 @@ io.sockets.on('connection', function (socket) {
             });
             broadcastRoomMembers(rooms[room]);
         }
+    });
+
+    socket.on('offer', function(data) {
+        var targetSocket = idToSocket(data.to);
+
+        var from = socketToId(socket);
+        console.log('forwarding offer from: ' + from + ' to: ' + data.to);
+
+        targetSocket.emit('offer', { offer : data.offer, peerId : socketToId(socket) } );
+    });
+
+    socket.on('answer', function(data) {
+        var targetSocket = idToSocket(data.to);
+
+        var from = socketToId(socket);
+        console.log('forwarding answer from: ' + from + ' to: ' + data.to);
+
+        targetSocket.emit('answer', { answer : data.answer, peerId : socketToId(socket) } );
     });
 });
